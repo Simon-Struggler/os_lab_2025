@@ -1,3 +1,5 @@
 #!/bin/sh
-
-echo "Hello, world!"
+pwd
+dt=$(date '+%d/%m/%Y %H:%M:%S');
+echo $PATH
+echo "$dt"

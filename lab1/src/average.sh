@@ -1,0 +1,1 @@
+ awk '{sum+=$2}END{printf "Sum=%d\nCount=%d\nAve=%.2f\n",sum,NR,sum/NR}' numbers.txt
