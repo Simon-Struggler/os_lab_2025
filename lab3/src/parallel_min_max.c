@@ -95,7 +95,7 @@ int main(int argc, char **argv) {
   int *array = malloc(sizeof(int) * array_size);
   GenerateArray(array, array_size, seed);
   
-  // Создаем пайпы или файлы для каждого процесса
+  // Create pipes and files for processes
   int pipefd[2 * pnum];
   char filenames[pnum][256];
   
@@ -117,7 +117,7 @@ int main(int argc, char **argv) {
   struct timeval start_time;
   gettimeofday(&start_time, NULL);
 
-  // Вычисляем размер части массива для каждого процесса
+  // Calculate array size for processes
   int chunk_size = array_size / pnum;
   int remainder = array_size % pnum;
 
@@ -131,7 +131,7 @@ int main(int argc, char **argv) {
         int start = i * chunk_size;
         int end = (i == pnum - 1) ? array_size : start + chunk_size;
         
-        // Если есть остаток, добавляем его к последнему процессу
+        // If smth remains - add to next process
         if (i == pnum - 1 && remainder > 0) {
           end += remainder;
         }
@@ -147,7 +147,7 @@ int main(int argc, char **argv) {
           }
         } else {
           // use pipe here
-          close(pipefd[i * 2]); // закрываем чтение
+          close(pipefd[i * 2]);
           write(pipefd[i * 2 + 1], &local_min_max.min, sizeof(int));
           write(pipefd[i * 2 + 1], &local_min_max.max, sizeof(int));
           close(pipefd[i * 2 + 1]);
@@ -162,15 +162,15 @@ int main(int argc, char **argv) {
     }
   }
 
-  // В родительском процессе закрываем ненужные дескрипторы пайпов
+  // In parent process close unnecessary desc
   if (!with_files) {
     for (int i = 0; i < pnum; i++) {
-      close(pipefd[i * 2 + 1]); // закрываем запись в родительском процессе
+      close(pipefd[i * 2 + 1]);
     }
   }
 
   while (active_child_processes > 0) {
-    wait(NULL); // ждем завершения всех дочерних процессов
+    wait(NULL); // wait for subprocess
     active_child_processes -= 1;
   }
 
@@ -188,7 +188,6 @@ int main(int argc, char **argv) {
       if (file != NULL) {
         fscanf(file, "%d %d", &min, &max);
         fclose(file);
-        // Удаляем временный файл
         remove(filenames[i]);
       }
     } else {
