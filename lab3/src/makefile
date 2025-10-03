@@ -2,15 +2,16 @@ CC=gcc
 CFLAGS=-I.
 
 # Default target - build all programs
-all: sequential_min_max parallel_min_max
+all: sequential_min_max parallel_min_max runner
 
-# Sequential program
 sequential_min_max: utils.o find_min_max.o sequential_min_max.o
 	$(CC) -o sequential_min_max utils.o find_min_max.o sequential_min_max.o $(CFLAGS)
 
-# Parallel program
 parallel_min_max: utils.o find_min_max.o parallel_min_max.o
 	$(CC) -o parallel_min_max utils.o find_min_max.o parallel_min_max.o $(CFLAGS)
+
+runner: runner.o
+	$(CC) -o runner runner.o $(CFLAGS)
 
 # Object files
 utils.o: utils.c utils.h
@@ -25,9 +26,12 @@ sequential_min_max.o: sequential_min_max.c find_min_max.h utils.h
 parallel_min_max.o: parallel_min_max.c find_min_max.h utils.h
 	$(CC) -o parallel_min_max.o -c parallel_min_max.c $(CFLAGS)
 
+runner.o: runner.c
+	$(CC) -o runner.o -c runner.c $(CFLAGS)
+
 # Clean target
 clean:
-	rm -f *.o sequential_min_max parallel_min_max
+	rm -f *.o sequential_min_max parallel_min_max runner
 
 # Phony targets (not real files)
 .PHONY: all clean
